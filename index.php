@@ -25,14 +25,19 @@ $challenge_timeout = $_REQUEST['challenge_timeout'];
 #This is the shared secret from the SSID setup
 $sharedsecret = '1234567890';
 
+#Build the URL to go back to Arista AP
+$build_the_digest = 'res=success&challenge=' . $challenge;
+
 #Now to build the HASH
 $key = sha1($sharedsecret);
+$temp_key1 = $key;
 $key = substr($key, 0, 40);
+$temp_key2 = $key;
 $asciiKey = pack("H*", $key);
-$digest = hash_hmac("sha1", $userurl, $asciiKey);
+$digest = hash_hmac("sha1", $build_the_digest, $asciiKey);
 
 #Now to build the link back to the AP
-$return_to_ap = $login_url . "?res=success&challenge=" . $challenge . "&digest=" . $digest 
+$return_to_ap = $login_url . "?res=success&challenge=" . $challenge . "&digest=" . $digest;
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -57,7 +62,7 @@ $return_to_ap = $login_url . "?res=success&challenge=" . $challenge . "&digest="
       <font size="2" face="Helvetica, Arial, sans-serif">This is a 3rd party hosted portal designed as an example to building your own paid or free internet access. You can add more features like a database or e-commerce to charge customers for internet access. All of the code will be posted on github and continued development.</font>
     </td>
     <td width="50%" height="250" align="center">
-      <strong><font size="3" face="Helvetica, Arial, sans-serif"><a href="">Join Internet Link</a></font></strong></br></br></br>
+      <strong><font size="3" face="Helvetica, Arial, sans-serif"><a href="<?=$return_to_ap?>">Join Internet Link</a></font></strong></br></br></br>
       <font size="1" face="Helvetica, Arial, sans-serif">This link above sends a code to the AP for the individual to gain access.</br>
       </font>
     </td>
@@ -92,7 +97,10 @@ $return_to_ap = $login_url . "?res=success&challenge=" . $challenge . "&digest="
       Response: <?=$res?></br>
       Client Mac: <?=$client_mac?></br></br>
       <strong>Encoding the URL</strong></br>
-      Return Link: <?=$return_to_ap?></font>
+      Return Link: <?=$return_to_ap?></br>
+      Key1: <?=$temp_key1?></br>
+      Key2: <?=$temp_key2?></br>
+      ASCII Key: <?=$asciiKey?></font>
     </td>
   </tr>
 </table>
